@@ -15,7 +15,8 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh 'docker build -t myapp:latest .'
+                    // Assuming Dockerfile is in Jenkins/ directory inside the repo
+                    sh 'docker build -t myapp:latest Jenkins/'
                 }
             }
         }
