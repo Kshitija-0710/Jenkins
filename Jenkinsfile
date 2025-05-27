@@ -2,43 +2,45 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'myapp'
-        IMAGE_TAG = 'latest'
-        REGISTRY = 'kshitija1510'
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
     }
 
     stages {
         stage('Clone Repo') {
-    steps {
-        git credentialsId: 'github-creds', url: 'https://github.com/Kshitija-0710/Jenkins.git'
-    }
-}
+            steps {
+                git credentialsId: 'github-creds', url: 'https://github.com/Kshitija-0710/Jenkins.git'
+            }
+        }
 
         stage('Build') {
             steps {
                 script {
-                    sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+                    sh 'docker build -t myapp:latest .'
                 }
             }
         }
 
         stage('Test') {
             steps {
+                echo 'Running tests...'
+                // Add your test commands here
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
                 script {
-                    sh 'docker run --rm $IMAGE_NAME:$IMAGE_TAG'
+                    sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
+                    sh 'docker tag myapp:latest kshitija1510/myapp:latest'
+                    sh 'docker push kshitija1510/myapp:latest'
                 }
             }
         }
 
         stage('Deploy') {
             steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                        sh 'docker tag $IMAGE_NAME:$IMAGE_TAG $REGISTRY/$IMAGE_NAME:$IMAGE_TAG'
-                        sh 'docker push $REGISTRY/$IMAGE_NAME:$IMAGE_TAG'
-                    }
-                }
+                echo 'Deploying application...'
+                // Add your deployment steps here
             }
         }
     }
