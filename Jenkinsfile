@@ -9,10 +9,10 @@ pipeline {
 
     stages {
         stage('Clone Repo') {
-            steps {
-                git 'https://github.com/kshitija1510/Jenkins.git'
-            }
-        }
+    steps {
+        git credentialsId: 'github-creds', url: 'https://github.com/Kshitija-0710/Jenkins.git'
+    }
+}
 
         stage('Build') {
             steps {
