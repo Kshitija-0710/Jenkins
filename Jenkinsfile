@@ -15,8 +15,8 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Assuming Dockerfile is in Jenkins/ directory inside the repo
-                    sh 'docker build -t myapp:latest Jenkins/'
+                    // ✅ Use current directory as context since Dockerfile is in repo root
+                    sh 'docker build -t myapp:latest .'
                 }
             }
         }
@@ -24,16 +24,16 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                // Add your test commands here
+                // Add test scripts here if any
             }
         }
 
         stage('Push to DockerHub') {
             steps {
                 script {
-                    sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
-                    sh 'docker tag myapp:latest kshitija1510/myapp:latest'
-                    sh 'docker push kshitija1510/myapp:latest'
+                    sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
+                    sh 'docker tag myapp:latest yourdockerhubusername/myapp:latest'
+                    sh 'docker push yourdockerhubusername/myapp:latest'
                 }
             }
         }
@@ -41,7 +41,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying application...'
-                // Add your deployment steps here
+                // Add your deployment logic here
             }
         }
     }
